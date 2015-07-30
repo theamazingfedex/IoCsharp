@@ -15,6 +15,7 @@ namespace myOC_WebApp.Controllers
     [Authorize]
     public class AccountController : Controller
     {
+        // This is supposed to get injected by my IoC Container
         private IController service;
 
         private ApplicationSignInManager _signInManager;
