@@ -16,14 +16,14 @@ namespace myOC_WebApp.Tests.Controllers
         [Fact]
         public void RegisterTest()
         {
-
-            String potatoes = MyIoC.Register();
-            Assert.Equal("potatoes!!", potatoes);
+            AccountController ctrl = new AccountController();
+            MyIoC.Register<Controller, AccountController>(ctrl);
+            //Assert.Equal("potatoes!!", potatoes);
         }
         [Fact]
         public void ResolveTest()
         {
-            Assert.Equal("cheese", MyIoC.Resolve());
+            //Assert.Equal("cheese", MyIoC.Resolve());
         }
 
     }
