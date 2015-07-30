@@ -15,11 +15,16 @@ namespace myOC_WebApp.Controllers
     [Authorize]
     public class AccountController : Controller
     {
+        private IController service;
+
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
-        public AccountController()
+        public AccountController() {}
+
+        public AccountController(IController svcController)
         {
+            this.service = svcController;
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )

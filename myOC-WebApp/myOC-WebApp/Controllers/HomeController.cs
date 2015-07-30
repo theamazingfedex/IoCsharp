@@ -8,8 +8,11 @@ namespace myOC_WebApp.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly Controller ctrl;
+
         public ActionResult Index()
         {
+            this.ViewData.Model = this.ctrl;
             return View();
         }
 
