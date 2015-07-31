@@ -23,7 +23,7 @@ namespace myOC_WebApp.Controllers
             }
             else
             {
-                return base.GetControllerInstance(controllerType);
+                return null;// base;//.GetControllerInstance(controllerType);
             }
         }
     }
