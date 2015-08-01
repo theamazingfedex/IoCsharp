@@ -15,7 +15,6 @@ namespace myOC_WebApp.IoC
         {
             types[typeof(IType)] = typeof(OType);
         }
-
         public static void Register<IType, OType>(OType instance)
         {
             objects[typeof(IType)] = instance;
