@@ -5,7 +5,6 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Routing;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -14,19 +13,19 @@ using myOC_WebApp.Models;
 namespace myOC_WebApp.Controllers
 {
     [Authorize]
-    public class AccountController : IController
+    public class AccountController : Controller
     {
         // This is supposed to get injected by my IoC Container
-        private Controller controller;
+        private IController service;
 
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
-        public AccountController() {}
+        public AccountController() { }
 
-        public AccountController(Controller injectedController)
+        public AccountController(IController svcController)
         {
-            this.controller = injectedController;
+            this.service = svcController;
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
@@ -39,11 +38,11 @@ namespace myOC_WebApp.Controllers
         {
             get
             {
-                return _signInManager ?? controller.HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -51,7 +50,7 @@ namespace myOC_WebApp.Controllers
         {
             get
             {
-                return _userManager ?? controller.HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
             }
             private set
             {
@@ -64,8 +63,8 @@ namespace myOC_WebApp.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
-            controller.ViewBag.ReturnUrl = returnUrl;
-            return controller.View();
+            ViewBag.ReturnUrl = returnUrl;
+            return View();
         }
 
         //
@@ -75,7 +74,7 @@ namespace myOC_WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
-            if (!controller.ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(model);
             }
@@ -93,7 +92,7 @@ namespace myOC_WebApp.Controllers
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
-                    controller.ModelState.AddModelError("", "Invalid login attempt.");
+                    ModelState.AddModelError("", "Invalid login attempt.");
                     return View(model);
             }
         }
@@ -118,7 +117,7 @@ namespace myOC_WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> VerifyCode(VerifyCodeViewModel model)
         {
-            if (!controller.ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(model);
             }
@@ -127,7 +126,7 @@ namespace myOC_WebApp.Controllers
             // If a user enters incorrect codes for a specified amount of time then the user account 
             // will be locked out for a specified amount of time. 
             // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -136,7 +135,7 @@ namespace myOC_WebApp.Controllers
                     return View("Lockout");
                 case SignInStatus.Failure:
                 default:
-                    controller.ModelState.AddModelError("", "Invalid code.");
+                    ModelState.AddModelError("", "Invalid code.");
                     return View(model);
             }
         }
@@ -156,14 +155,14 @@ namespace myOC_WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
-            if (controller.ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -207,7 +206,7 @@ namespace myOC_WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
-            if (controller.ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var user = await UserManager.FindByNameAsync(model.Email);
                 if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
@@ -251,7 +250,7 @@ namespace myOC_WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
         {
-            if (!controller.ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(model);
             }
@@ -286,7 +285,7 @@ namespace myOC_WebApp.Controllers
         public ActionResult ExternalLogin(string provider, string returnUrl)
         {
             // Request a redirect to the external login provider
-            return new ChallengeResult(provider, controller.Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
+            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
         }
 
         //
@@ -311,7 +310,7 @@ namespace myOC_WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> SendCode(SendCodeViewModel model)
         {
-            if (!controller.ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View();
             }
@@ -348,8 +347,8 @@ namespace myOC_WebApp.Controllers
                 case SignInStatus.Failure:
                 default:
                     // If the user does not have an account, then prompt the user to create an account
-                    controller.ViewBag.ReturnUrl = returnUrl;
-                    controller.ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
+                    ViewBag.ReturnUrl = returnUrl;
+                    ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
                     return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
             }
         }
@@ -361,12 +360,12 @@ namespace myOC_WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
         {
-            if (controller.User.Identity.IsAuthenticated)
+            if (User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Manage");
             }
 
-            if (controller.ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 // Get the information about the user from the external login provider
                 var info = await AuthenticationManager.GetExternalLoginInfoAsync();
@@ -388,7 +387,7 @@ namespace myOC_WebApp.Controllers
                 AddErrors(result);
             }
 
-            controller.ViewBag.ReturnUrl = returnUrl;
+            ViewBag.ReturnUrl = returnUrl;
             return View(model);
         }
 
@@ -410,7 +409,7 @@ namespace myOC_WebApp.Controllers
             return View();
         }
 
-        protected void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -427,7 +426,7 @@ namespace myOC_WebApp.Controllers
                 }
             }
 
-            Dispose(disposing);
+            base.Dispose(disposing);
         }
 
         #region Helpers
@@ -438,7 +437,7 @@ namespace myOC_WebApp.Controllers
         {
             get
             {
-                return controller.HttpContext.GetOwinContext().Authentication;
+                return HttpContext.GetOwinContext().Authentication;
             }
         }
 
@@ -446,22 +445,17 @@ namespace myOC_WebApp.Controllers
         {
             foreach (var error in result.Errors)
             {
-                controller.ModelState.AddModelError("", error);
+                ModelState.AddModelError("", error);
             }
         }
 
         private ActionResult RedirectToLocal(string returnUrl)
         {
-            if (controller.Url.IsLocalUrl(returnUrl))
+            if (Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
             }
             return RedirectToAction("Index", "Home");
-        }
-
-        public void Execute(RequestContext requestContext)
-        {
-            ((IController)controller).Execute(requestContext);
         }
 
         internal class ChallengeResult : HttpUnauthorizedResult
