@@ -9,30 +9,25 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using myOC_WebApp.Models;
+using myOC_WebApp.IoC;
 
 namespace myOC_WebApp.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : Controller, IAccountController
     {
         // This is supposed to get injected by my IoC Container
-        private IController service;
 
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
-        public AccountController() { }
-
-        public AccountController(IController svcController)
-        {
-            this.service = svcController;
-        }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
         }
+        public AccountController() { }//: this((ApplicationUserManager)MyIoC.Resolve(typeof(ApplicationUserManager)), (ApplicationSignInManager)MyIoC.Resolve(typeof(ApplicationSignInManager))) { }
 
         public ApplicationSignInManager SignInManager
         {
@@ -81,6 +76,7 @@ namespace myOC_WebApp.Controllers
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
+            Console.WriteLine("\nSignInManager's Type:: " + SignInManager.GetType());
             var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {

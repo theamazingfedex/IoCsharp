@@ -11,7 +11,7 @@ using myOC_WebApp.Models;
 namespace myOC_WebApp.Controllers
 {
     [Authorize]
-    public class ManageController : Controller
+    public class ManageController : Controller, IManageController
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;

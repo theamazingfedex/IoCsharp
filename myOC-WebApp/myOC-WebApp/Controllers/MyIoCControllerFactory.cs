@@ -7,42 +7,29 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.SessionState;
 using System.Web.Optimization;
+using System.ComponentModel;
 
 namespace myOC_WebApp.Controllers
 {
-    public class MyIoCControllerFactory : IControllerFactory
+    public class MyIoCControllerFactory : DefaultControllerFactory
     {
-        public IController CreateController(RequestContext requestContext, string controllerName)
+        public override IController CreateController(RequestContext requestContext, string controllerName)
         {
-            throw new NotImplementedException();
+            Type controllerType = Type.GetType(string.Concat("myOC_WebApp.Controllers.I", controllerName, "Controller"));
+            System.Diagnostics.Debug.WriteLine("++++CREATINGCONTROLLER" + controllerType.Name);
+            return (IController)MyIoC.Resolve(controllerType);
+            //return new HomeController((ILogger)MyIoC.Resolve(typeof(ILogger)));
+            //return new HomeController((ILogger)MyIoC.Resolve(controllerName));
         }
-
         public SessionStateBehavior GetControllerSessionBehavior(RequestContext requestContext, string controllerName)
         {
-            throw new NotImplementedException();
+            return SessionStateBehavior.Default;
         }
-
-        public void ReleaseController(IController controller)
+        public override void ReleaseController(IController controller)
         {
-            throw new NotImplementedException();
-        }
-
-        protected IController GetControllerInstance(Type controllerType)
-        {
-            if (controllerType == null)
-            {
-                return null;
-            }
-
-            IController controller = (IController)MyIoC.Resolve(controllerType);
-            if (controller != null)
-            {
-                return controller;
-            }
-            else
-            {
-                return null;// base;//.GetControllerInstance(controllerType);
-            }
+            IDisposable disposable = controller as IDisposable;
+            if (disposable != null)
+                disposable.Dispose();
         }
     }
 }

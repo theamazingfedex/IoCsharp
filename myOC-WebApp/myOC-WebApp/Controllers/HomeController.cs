@@ -1,4 +1,5 @@
-﻿using System;
+﻿using myOC_WebApp.IoC;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -6,25 +7,27 @@ using System.Web.Mvc;
 
 namespace myOC_WebApp.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : Controller, IHomeController
     {
-        private readonly Controller controller;
+        private readonly ILogger _logger;
 
-        public HomeController(Controller controller)
+        public HomeController(ILogger logger)
         {
-            this.controller = controller;
+            this._logger = logger;
+            _logger.Log("======== Started using injected constructor");
         }
-
+        public HomeController() : this((ILogger)MyIoC.Resolve(typeof(ILogger))){ }
         public ActionResult Index()
         {
-            this.ViewData.Model = this.controller;
+            ViewBag.Message = "The All-Glorious Index Page";
+            _logger.Log("Visited the index through home controller");
             return View();
         }
 
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
-
+            _logger.Log("Visited the About page through home controller");
             return View();
         }
 

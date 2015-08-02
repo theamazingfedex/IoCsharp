@@ -11,6 +11,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using myOC_WebApp.Models;
+using myOC_WebApp.Controllers;
 
 namespace myOC_WebApp
 {
@@ -33,7 +34,7 @@ namespace myOC_WebApp
     }
 
     // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
-    public class ApplicationUserManager : UserManager<ApplicationUser>
+    public class ApplicationUserManager : UserManager<ApplicationUser>, IApplicationUserManager
     {
         public ApplicationUserManager(IUserStore<ApplicationUser> store)
             : base(store)
@@ -89,7 +90,7 @@ namespace myOC_WebApp
     }
 
     // Configure the application sign-in manager which is used in this application.
-    public class ApplicationSignInManager : SignInManager<ApplicationUser, string>
+    public class ApplicationSignInManager : SignInManager<ApplicationUser, string>, IApplicationSignInManager
     {
         public ApplicationSignInManager(ApplicationUserManager userManager, IAuthenticationManager authenticationManager)
             : base(userManager, authenticationManager)
