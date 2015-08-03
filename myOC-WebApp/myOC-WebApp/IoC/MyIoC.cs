@@ -1,4 +1,5 @@
-﻿using System;
+﻿using myOC_WebApp.Controllers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -29,27 +30,43 @@ namespace myOC_WebApp.IoC
 
         public static object Resolve(Type contract)
         {
-            System.Diagnostics.Debug.WriteLine(" ---------- RESOLVING CONTRACT :: " + contract.Name);
+            System.Diagnostics.Debug.WriteLine(" ---------- RESOLVING CONTRACT :: " + contract.FullName);
             if (objects.ContainsKey(contract))
             {
                 return objects[contract];
             }
-            else
+            else if (types.ContainsKey(contract))
             {
                 Type implementation = types[contract];
-                ConstructorInfo constructor = implementation.GetConstructors()[0];
-                ParameterInfo[] constructorParameters = constructor.GetParameters();
-                if (constructorParameters.Length == 0)
-                {
-                    return Activator.CreateInstance(implementation);
-                }
-                List<object> parameters = new List<object>(constructorParameters.Length);
-                foreach (ParameterInfo parameterInfo in constructorParameters)
-                {
-                    parameters.Add(Resolve(parameterInfo.ParameterType));
-                }
-                return constructor.Invoke(parameters.ToArray());
+                return TheObjectOf(implementation);
             }
+            else
+            {
+                return TheObjectOf(contract);
+            }
+        }
+
+        private static object TheObjectOf(Type implementation)
+        {
+            ConstructorInfo constructor = implementation.GetConstructors()[0];
+            ParameterInfo[] constructorParameters = constructor.GetParameters();
+            if (constructorParameters.Length == 0)
+            {
+                return Activator.CreateInstance(implementation);
+            }
+            List<object> parameters = new List<object>(constructorParameters.Length);
+            foreach (ParameterInfo parameterInfo in constructorParameters)
+            {
+                //try {
+                    parameters.Add(Resolve(parameterInfo.ParameterType));
+                //}
+                //catch (KeyNotFoundException ex)
+                //{
+                //    new Logger().Log(ex.Message);
+                //    parameters.Add(TheObjectOf(parameterInfo.ParameterType));
+                //}
+            }
+            return constructor.Invoke(parameters.ToArray());
         }
     }
 }

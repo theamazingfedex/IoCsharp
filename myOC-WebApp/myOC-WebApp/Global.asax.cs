@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
 using myOC_WebApp.Controllers;
 using myOC_WebApp.IoC;
 using myOC_WebApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -36,6 +38,18 @@ namespace myOC_WebApp
             MyIoC.Register<IAccountController, AccountController>();
             MyIoC.Register<IManageController, ManageController>();
             MyIoC.Register<IController, Controller>();
+            MyIoC.Register<IAuthenticationManager, AuthenticationManager>();
+            MyIoC.Register<ApplicationUserManager, ApplicationUserManager>();
+            MyIoC.Register<UserStore<ApplicationUser>, UserStore<ApplicationUser>> ();
+            MyIoC.Register<ApplicationSignInManager, ApplicationSignInManager>();
+            /*
+             ---------- RESOLVING CONTRACT :: ApplicationUserManager
+             ---------- RESOLVING CONTRACT :: UserStore`1
+             ---------- RESOLVING CONTRACT :: ApplicationSignInManager
+             ---------- RESOLVING CONTRACT :: ApplicationUserManager
+             ---------- RESOLVING CONTRACT :: UserStore`1
+             ---------- RESOLVING CONTRACT :: IAuthenticationManager
+            */
             //MyIoC.Register<AccountController, AccountController>();
             //MyIoC.Register<ManageController, ManageController>();
             //MyIoC.Register<HomeController, HomeController>();

@@ -15,8 +15,9 @@ namespace myOC_WebApp.Controllers
     {
         public override IController CreateController(RequestContext requestContext, string controllerName)
         {
-            Type controllerType = Type.GetType(string.Concat("myOC_WebApp.Controllers.I", controllerName, "Controller"));
-            System.Diagnostics.Debug.WriteLine("++++CREATINGCONTROLLER" + controllerType.Name);
+            controllerName = string.Concat("myOC_WebApp.Controllers.I", controllerName, "Controller");
+            System.Diagnostics.Debug.WriteLine("++++CREATINGCONTROLLER" + controllerName);
+            Type controllerType = Type.GetType(controllerName);
             return (IController)MyIoC.Resolve(controllerType);
             //return new HomeController((ILogger)MyIoC.Resolve(typeof(ILogger)));
             //return new HomeController((ILogger)MyIoC.Resolve(controllerName));
