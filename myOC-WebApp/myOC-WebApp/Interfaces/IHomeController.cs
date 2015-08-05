@@ -1,8 +1,8 @@
 ﻿using System.Web.Mvc;
 
-namespace myOC_WebApp.Controllers
+namespace myOC_WebApp.Interfaces
 {
-    internal interface IHomeController
+    public interface IHomeController
     {
         ActionResult Index();
 

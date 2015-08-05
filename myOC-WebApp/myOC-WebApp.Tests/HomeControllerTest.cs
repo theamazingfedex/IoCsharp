@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web.Mvc;
-using myOC_WebApp;
 using myOC_WebApp.Controllers;
 using myOC_WebApp.IoC;
 using Xunit;
@@ -13,19 +8,27 @@ namespace myOC_WebApp.Tests.Controllers
 {
     public class MyOCTest
     {
-        [Fact]
-        public void RegisterTest()
+        [Theory]
+        [InlineData(typeof(ILogger), typeof(Logger))]
+        [InlineData(typeof(Logger), typeof(Logger))]
+        public void TestRegisterResolveTransient(Type itype, Type type)
         {
-            AccountController ctrl = new AccountController();
-            MyIoC.Register<Controller, AccountController>(ctrl);
-            //Assert.Equal("potatoes!!", potatoes);
-        }
-        [Fact]
-        public void ResolveTest()
-        {
-            //Assert.Equal("cheese", MyIoC.Resolve());
+            MyIoC.Register(itype, type);
+            Assert.IsAssignableFrom(type, MyIoC.Resolve(itype));
         }
 
+        [Theory]
+        [InlineData(typeof(ILogger), typeof(Logger))]
+        [InlineData(typeof(Logger), typeof(Logger))]
+        [InlineData(typeof(IHomeController), typeof(HomeController))]
+        public void TestRegisterResolveSingleton(Type itype, Type type)
+        {
+            //MyIoC.Register<ILogger, Logger>(new Logger("TestLogger"));
+            MyIoC.Register(itype, type);
+            var implementation = MyIoC.TheObjectOf(type);
+            MyIoC.Register(itype, type, implementation);
+            Assert.IsAssignableFrom(type, MyIoC.Resolve(itype));
+        }
     }
 
     // The tests below are for testing the asp.net service. Saving them for later

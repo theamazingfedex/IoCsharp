@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -9,15 +7,13 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using myOC_WebApp.Models;
-using myOC_WebApp.IoC;
+using myOC_WebApp.Interfaces;
 
 namespace myOC_WebApp.Controllers
 {
     [Authorize]
     public class AccountController : Controller, IAccountController
     {
-        // This is supposed to get injected by my IoC Container
-
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
@@ -27,7 +23,7 @@ namespace myOC_WebApp.Controllers
             UserManager = userManager;
             SignInManager = signInManager;
         }
-        public AccountController() { }//: this((ApplicationUserManager)MyIoC.Resolve(typeof(ApplicationUserManager)), (ApplicationSignInManager)MyIoC.Resolve(typeof(ApplicationSignInManager))) { }
+        public AccountController() { }
 
         public ApplicationSignInManager SignInManager
         {

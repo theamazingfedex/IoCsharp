@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using myOC_WebApp.Controllers;
 using myOC_WebApp.Models;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
-namespace myOC_WebApp.Controllers
+namespace myOC_WebApp.Interfaces
 {
     internal interface IManageController
     {

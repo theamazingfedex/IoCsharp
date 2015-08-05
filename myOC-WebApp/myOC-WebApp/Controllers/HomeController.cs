@@ -1,8 +1,5 @@
-﻿using myOC_WebApp.IoC;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using myOC_WebApp.Interfaces;
+using myOC_WebApp.IoC;
 using System.Web.Mvc;
 
 namespace myOC_WebApp.Controllers
@@ -14,7 +11,7 @@ namespace myOC_WebApp.Controllers
         public HomeController(ILogger logger)
         {
             this._logger = logger;
-            _logger.Log("======== Started using injected constructor");
+            _logger.Log("======== Started HomeController using injected constructor");
         }
         public HomeController() : this((ILogger)MyIoC.Resolve(typeof(ILogger))){ }
         public ActionResult Index()
