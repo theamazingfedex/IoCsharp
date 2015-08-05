@@ -66,7 +66,7 @@ namespace myOC_WebApp.IoC
             }
         }
 
-        // Returns an instance of an object type passed in. Tries to Resolve() nested dependencies.
+        // Returns an instance of an object type passed in. Tries to Resolve() nested dependencies. Made this public for testing purposes.
         public static object TheObjectOf(Type implementation)
         {
             ConstructorInfo constructor;
@@ -90,6 +90,10 @@ namespace myOC_WebApp.IoC
                     parameters.Add(Resolve(parameterInfo.ParameterType));
                 }
                 catch (KeyNotFoundException ex)
+                {
+                    throw new CustomException("FATAL: " + implementation.FullName + " could not resolve its dependencies. Have they been registered?", ex);
+                }
+                catch (CustomException ex)
                 {
                     throw new CustomException("FATAL: " + implementation.FullName + " could not resolve its dependencies. Have they been registered?", ex);
                 }
