@@ -9,7 +9,7 @@ namespace myOC_WebApp.Controllers
     {
         public override IController CreateController(RequestContext requestContext, string controllerName)
         {
-            controllerName = string.Concat("myOC_WebApp.Controllers.I", controllerName, "Controller");
+            controllerName = string.Concat("myOC_WebApp.Interfaces.I", controllerName, "Controller");
             System.Diagnostics.Debug.WriteLine("++++CREATINGCONTROLLER " + controllerName);
             Type controllerType = Type.GetType(controllerName);
             return (IController)MyIoC.Resolve(controllerType);
