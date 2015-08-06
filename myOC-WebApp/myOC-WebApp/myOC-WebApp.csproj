@@ -169,7 +169,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Exceptions\CustomException.cs" />
+    <Compile Include="fonts\Exceptions\CustomException.cs" />
     <Compile Include="Interfaces\IAccountController.cs" />
     <Compile Include="Interfaces\ILogger.cs" />
     <Compile Include="Controllers\Logger.cs" />

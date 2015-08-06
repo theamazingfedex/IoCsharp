@@ -13,7 +13,8 @@ namespace myOC_WebApp.Controllers
             this._logger = logger;
             _logger.Log("======== Started HomeController using injected constructor");
         }
-        public HomeController() : this((ILogger)MyIoC.Resolve(typeof(ILogger))){ }
+        public HomeController() { }//: this((ILogger)MyIoC.Resolve(typeof(ILogger))){ }
+
         public ActionResult Index()
         {
             ViewBag.Message = "The All-Glorious Index Page";

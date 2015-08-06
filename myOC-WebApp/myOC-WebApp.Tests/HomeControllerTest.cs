@@ -16,7 +16,8 @@ namespace myOC_WebApp.Tests.Controllers
         public void TestRegisterResolveTransient(Type itype, Type type)
         {
             MyIoC.Register(itype, type);
-            Assert.IsAssignableFrom(type, MyIoC.Resolve(itype));
+            //Assert.IsAssignableFrom(type, MyIoC.Resolve(itype));
+            Assert.NotSame(MyIoC.Resolve(itype), MyIoC.Resolve(itype));
         }
 
         [Theory]
@@ -29,7 +30,8 @@ namespace myOC_WebApp.Tests.Controllers
             // create an instance of the object to set as the singleton
             var implementation = MyIoC.TheObjectOf(type);
             MyIoC.Register(itype, type, implementation);
-            Assert.IsAssignableFrom(type, MyIoC.Resolve(itype));
+            Assert.Same(MyIoC.Resolve(itype), MyIoC.Resolve(itype));
+            //Assert.IsAssignableFrom(type, MyIoC.Resolve(itype));
         }
     }
 
